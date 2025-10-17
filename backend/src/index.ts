@@ -1,16 +1,16 @@
-import express from 'express'
-const PORT = process.env.PORT || 3000
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
 
-const app = express()
+dotenv.config();
 
-app.use(express.json())
+const PORT = process.env.PORT || 3000;
 
-app.get('/', (_req, res) => {
-  res.json({ message: 'Hello world!' })
+const app = express();
+
+app.use(express.json());
+app.use(cors())
+
+app.listen(PORT, async () => {
+  console.log(`Server is running on port ${PORT}`)
 })
-
-app.listen(PORT, () => {
-  console.log('Server is running on port', PORT)
-})
-
-export default app

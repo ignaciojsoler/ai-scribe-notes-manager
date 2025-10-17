@@ -1,24 +1,27 @@
-To develop locally:
+# Backend Setup
 
-```
-npm install
-vc dev
-```
+## Prerequisites
+- Node.js and npm installed
+- Docker and Docker Compose installed
 
-```
-open http://localhost:3000
-```
+## Setup Instructions
 
-To build locally:
+1. **Start the database services**
+   ```bash
+   docker compose up -d
+   ```
 
-```
-npm install
-vc build
-```
+2. **Generate Prisma client**
+   ```bash
+   npx prisma generate
+   ```
 
-To deploy:
+3. **Run database migrations**
+   ```bash
+   npx prisma migrate dev
+   ```
 
-```
-npm install
-vc deploy
-```
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
