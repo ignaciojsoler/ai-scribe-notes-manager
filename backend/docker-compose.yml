@@ -1,6 +1,23 @@
-version: '3.8'
-
 services:
+  app:
+    build: .
+    container_name: lime-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/lime
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lime-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+
   postgres:
     image: postgres:15-alpine
     container_name: lime-postgres
@@ -13,9 +30,13 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - lime-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lime"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

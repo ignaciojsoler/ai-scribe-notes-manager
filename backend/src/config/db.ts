@@ -8,6 +8,7 @@ export const testConnection = async () => {
     console.log('Connection to PostgreSQL with Prisma successful')
   } catch (err) {
     console.error('Error connecting to PostgreSQL:', err)
+    throw new Error(`Error connecting to PostgreSQL: ${err}`)
   }
 }
 
