@@ -6,3 +6,14 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Patient {
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String   @unique
+  dateOfBirth    DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  //TODO: notes          Note[]
+}
