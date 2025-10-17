@@ -1,9 +1,8 @@
 import { Router } from "express";
+import patientRoutes from "./patient.route";
 
 const router = Router();
 
-router.get('/', (req, res) => {
-  res.json({ message: 'Hello World' });
-});
+router.use('/patients', patientRoutes);
 
 export default router;
