@@ -6,9 +6,9 @@ services:
     container_name: lime-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: lime_db
-      POSTGRES_USER: lime_user
-      POSTGRES_PASSWORD: lime_password
+      POSTGRES_DB: lime
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
