@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import fs from "fs";
 import path from "path";
-import { CreateNoteDto } from "../dtos/note.dto";
+import { CreateNoteDto, UpdateNoteDto } from "../dtos/note.dto";
 
 const prisma = new PrismaClient();
 
@@ -44,5 +44,18 @@ export const findNoteById = async (id: number) => {
     include: {
       patient: true,
     },
+  });
+};
+
+export const updateNoteService = async (id: number, data: UpdateNoteDto) => {
+  return await prisma.note.update({
+    where: { id },
+    data,
+  });
+};
+
+export const deleteNoteService = async (id: number) => {
+  return await prisma.note.delete({
+    where: { id },
   });
 };
