@@ -29,3 +29,7 @@ export const createNote = async ({ patientId, inputText, audioFile }: CreateNote
 
   return note;
 };
+
+export const getAllNotes = async () => {
+  return await prisma.note.findMany();
+};

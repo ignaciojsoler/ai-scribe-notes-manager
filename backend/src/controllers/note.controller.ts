@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createNote } from "../services/note.service";
+import { createNote, getAllNotes } from "../services/note.service";
 
 export const saveNote = async (req: Request, res: Response) => {
   try {
@@ -16,5 +16,14 @@ export const saveNote = async (req: Request, res: Response) => {
     res.status(201).json(note);
   } catch (error) {
     res.status(500).json({ message: 'Error creating new note' });
+  }
+};
+
+export const getNotes = async (req: Request, res: Response) => {
+  try {
+    const notes = await getAllNotes();
+    res.status(200).json(notes);
+  } catch (error) {
+    res.status(500).json({ message: 'Error getting notes' });
   }
 };
