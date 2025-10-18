@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { PatientList } from './components/PatientList';
 import { PatientDetail } from './components/PatientDetail';
+import { NewNote } from './components/NewNote';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
               </>
             } />
             <Route path="/patients/:id" element={<PatientDetail />} />
+            <Route path="/patients/:id/new-note" element={<NewNote />} />
           </Routes>
         </div>
       </div>

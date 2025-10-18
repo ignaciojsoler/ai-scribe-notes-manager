@@ -100,5 +100,8 @@ export const deleteNoteService = async (id: number) => {
 export const getNotesByPatientIdService = async (patientId: number) => {
   return await prisma.note.findMany({
     where: { patientId },
+    include: {
+      patient: true,
+    },
   });
 };
