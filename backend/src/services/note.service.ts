@@ -37,3 +37,12 @@ export const getAllNotes = async () => {
     },
   });
 };
+
+export const findNoteById = async (id: number) => {
+  return await prisma.note.findUnique({
+    where: { id },
+    include: {
+      patient: true,
+    },
+  });
+};
