@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createNote, findNoteById, getAllNotes, updateNoteService, deleteNoteService } from "../services/note.service";
+import { createNote, findNoteById, getAllNotes, updateNoteService, deleteNoteService, getNotesByPatientIdService } from "../services/note.service";
 
 export const saveNote = async (req: Request, res: Response) => {
   try {
@@ -52,5 +52,14 @@ export const deleteNote = async (req: Request, res: Response) => {
     res.status(200).json(note);
   } catch (error) {
     res.status(500).json({ message: 'Error deleting note' });
+  }
+};
+
+export const getNotesByPatientId = async (req: Request, res: Response) => {
+  try {
+    const notes = await getNotesByPatientIdService(Number(req.params.patientId));
+    res.status(200).json(notes);
+  } catch (error) {
+    res.status(500).json({ message: 'Error getting notes by patient id' });
   }
 };
