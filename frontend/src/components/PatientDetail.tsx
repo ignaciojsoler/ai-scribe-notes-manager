@@ -1,8 +1,10 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { usePatientNotes } from '../hooks/usePatientNotes';
 import type { Note } from '../types/note';
 
 const NoteCard = ({ note }: { note: Note }) => {
+  const navigate = useNavigate();
+  
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -19,7 +21,10 @@ const NoteCard = ({ note }: { note: Note }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div 
+      className="bg-white rounded-lg shadow-md border border-gray-200 p-6 cursor-pointer hover:shadow-lg transition-shadow duration-200"
+      onClick={() => navigate(`/notes/${note.id}`)}
+    >
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-lg font-semibold text-gray-900">Note #{note.id}</h3>
         <span className="text-sm text-gray-500">
@@ -41,6 +46,10 @@ const NoteCard = ({ note }: { note: Note }) => {
             <span className="text-sm text-blue-600">Audio available</span>
           </div>
         )}
+        
+        <div className="mt-4 text-xs text-blue-600 font-medium">
+          Click to view full note →
+        </div>
       </div>
     </div>
   );
