@@ -31,5 +31,9 @@ export const createNote = async ({ patientId, inputText, audioFile }: CreateNote
 };
 
 export const getAllNotes = async () => {
-  return await prisma.note.findMany();
+  return await prisma.note.findMany({
+    include: {
+      patient: true,
+    },
+  });
 };
