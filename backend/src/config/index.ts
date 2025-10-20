@@ -1,1 +1,1 @@
-// export * from './example.config'
+export * from './db.config.js';

@@ -1,69 +1,48 @@
-import { PrismaClient } from "@prisma/client";
 import fs from "fs";
-import path from "path";
 import { CreateNoteDto, UpdateNoteDto } from "../dtos/note.dto";
-import { transcribeAudio } from "./aiService";
-import mime from "mime-types";
-
-const prisma = new PrismaClient();
+import { summarizeText } from "./index";
+import { saveAudioFile, transcribeAndSummarize } from "../utils/helpers/note.helpers";
+import prisma from "../config/db.config";
 
 export const createNote = async ({ patientId, inputText, audioFile }: CreateNoteDto) => {
   let audioPath: string | null = null;
   let transcription: string | null = null;
+  let summary: string | null = null;
 
   try {
     if (audioFile) {
-      const uploadDir = path.join(process.cwd(), "uploads");
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-
-      // nombre único para evitar colisiones
-      const timestamp = Date.now();
-      const safeName = `${timestamp}-${audioFile.originalname}`;
-      const filePath = path.join(uploadDir, safeName);
-
-      // escribir archivo
-      fs.writeFileSync(filePath, audioFile.buffer);
-      audioPath = filePath;
-
-      // transcribir (aiService decide inline vs upload)
-      transcription = await transcribeAudio({
-        filePath,
+      audioPath = saveAudioFile({ audioFile: audioFile as Express.Multer.File });
+      const result = await transcribeAndSummarize({
+        filePath: audioPath,
         buffer: audioFile.buffer,
         originalName: audioFile.originalname,
       });
-
-      // opcional: guardá also detected mime tipo en DB si querés
-      const detectedMime = mime.lookup(audioFile.originalname) ?? null;
-      console.info("Saved audio to", filePath, "mime:", detectedMime);
+      transcription = result.transcription;
+      summary = result.summary;
+    } else if (inputText?.trim()) {
+      summary = await summarizeText(inputText);
     }
 
-    // crear nota en DB
     const note = await prisma.note.create({
       data: {
         patientId,
         inputText: inputText ?? null,
-        transcription: transcription ?? null,
-        summary: null,
+        transcription,
+        summary,
         audioPath,
       },
     });
 
     return note;
-  } catch (err) {
-    console.error("createNote error:", err);
-    // si algo falló y el archivo fue escrito, opcionalmente borrarlo:
+  } catch (error) {
     if (audioPath && fs.existsSync(audioPath)) {
       try {
         fs.unlinkSync(audioPath);
-      } catch (e) {
-        console.warn("Failed to cleanup audio file:", audioPath, e);
+      } catch (cleanupError) {
+        console.warn("Failed to cleanup audio file:", audioPath, cleanupError);
       }
     }
-    throw err;
-  } finally {
-    // no hacer prisma.$disconnect() aquí si Prisma se maneja a nivel app
+    throw error;
   }
 };
 
