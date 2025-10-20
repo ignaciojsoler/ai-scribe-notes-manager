@@ -30,8 +30,61 @@ echo ""
 # Build and start all services
 docker-compose up --build -d
 
-echo "⏳ Waiting for services to be ready..."
-sleep 15
+# Function to wait for a service to be ready
+wait_for_service() {
+    local service_name=$1
+    local max_attempts=30
+    local attempt=1
+    
+    echo "⏳ Waiting for $service_name to be ready..."
+    
+    while [ $attempt -le $max_attempts ]; do
+        # Check if container is running
+        if docker-compose ps $service_name | grep -q "Up"; then
+            # Additional checks for specific services
+            case $service_name in
+                "postgres")
+                    if docker-compose exec -T postgres pg_isready -U postgres -d lime > /dev/null 2>&1; then
+                        echo "✅ $service_name is ready!"
+                        return 0
+                    fi
+                    ;;
+                "backend")
+                    if curl -s http://localhost:3000/api/patients > /dev/null 2>&1; then
+                        echo "✅ $service_name is ready!"
+                        return 0
+                    fi
+                    ;;
+                "frontend")
+                    if curl -s http://localhost:5173 > /dev/null 2>&1; then
+                        echo "✅ $service_name is ready!"
+                        return 0
+                    fi
+                    ;;
+                *)
+                    echo "✅ $service_name is ready!"
+                    return 0
+                    ;;
+            esac
+        fi
+        
+        echo "   Attempt $attempt/$max_attempts - $service_name not ready yet..."
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+    
+    echo "❌ $service_name failed to start after $max_attempts attempts"
+    return 1
+}
+
+# Wait for services to be ready (in order of dependencies)
+echo "🔍 Checking service readiness..."
+wait_for_service postgres
+wait_for_service backend
+wait_for_service frontend
+
+echo ""
+echo "🎉 All services are ready!"
 
 echo "🗄️ Running database migrations..."
 docker-compose exec -T backend npx prisma migrate dev --name init || echo "⚠️ Migrations may have already been run"
