@@ -1,0 +1,7 @@
+***INPUT EXAMPLES***
+
+- Patient reports dry cough and mild shortness of breath for five days. Denies fever or sore throat. Lungs clear on auscultation. Oxygen saturation 98%. Advised hydration and rest, follow-up if symptoms worsen.
+
+- Patient describes sharp lower back pain after lifting heavy boxes yesterday. No radiating pain or numbness. Tenderness over lumbar area. Range of motion slightly reduced. Prescribed NSAIDs and recommended heat therapy.
+
+- Patient presents with fatigue and increased thirst for two weeks. Random glucose 185 mg/dL. No weight loss or abdominal pain. Ordered fasting glucose and HbA1c for further evaluation.
