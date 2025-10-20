@@ -1,4 +1,4 @@
-# Lime AI Challenge - Setup Guide
+# AI Scribe Notes Manager - Setup Guide
 
 A full-stack medical note-taking application with AI-powered transcription and summarization.
 
