@@ -46,7 +46,6 @@ export const NewNote = () => {
         },
       });
       
-      // Navigate back to patient notes after successful creation
       navigate(`/patients/${patientId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create note');

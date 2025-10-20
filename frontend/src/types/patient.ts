@@ -2,7 +2,7 @@ export interface Patient {
   id: number;
   name: string;
   email: string;
-  dateOfBirth: string; // ISO date string from API
+  dateOfBirth: string;
   createdAt: string;
   updatedAt: string;
 }

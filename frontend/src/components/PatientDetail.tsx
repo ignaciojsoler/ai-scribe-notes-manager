@@ -1,4 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { usePatientNotes } from '../hooks/usePatientNotes';
 import type { Note } from '../types/note';
 
@@ -35,7 +37,28 @@ const NoteCard = ({ note }: { note: Note }) => {
       <div className="space-y-3">
         <div>
           <span className="font-medium text-gray-700">Preview:</span>
-          <p className="mt-1 text-gray-900">{getNotePreview()}</p>
+          <div className="mt-1 text-gray-900 text-sm">
+            {note.summary ? (
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  h1: ({ children }) => <span className="font-semibold text-blue-700">{children}</span>,
+                  h2: ({ children }) => <span className="font-semibold text-blue-600">{children}</span>,
+                  h3: ({ children }) => <span className="font-semibold text-blue-500">{children}</span>,
+                  strong: ({ children }) => <span className="font-semibold">{children}</span>,
+                  em: ({ children }) => <span className="italic">{children}</span>,
+                  ul: ({ children }) => <ul className="list-disc list-inside ml-2">{children}</ul>,
+                  ol: ({ children }) => <ol className="list-decimal list-inside ml-2">{children}</ol>,
+                  li: ({ children }) => <li>{children}</li>,
+                  p: ({ children }) => <p className="mb-1">{children}</p>,
+                }}
+              >
+                {getNotePreview()}
+              </ReactMarkdown>
+            ) : (
+              <p>{getNotePreview()}</p>
+            )}
+          </div>
         </div>
         
         {note.audioPath && (
@@ -100,7 +123,6 @@ export const PatientDetail = () => {
   if (loading) return <LoadingState />;
   if (error) return <ErrorState error={error} onRetry={refetch} />;
 
-  // Get patient name from the first note (if available)
   const patientName = notes.length > 0 ? notes[0].patient.name : `Patient #${patientId}`;
 
   return (

@@ -1,4 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useNote } from '../hooks/useNote';
 import type { Note } from '../types/note';
 
@@ -68,6 +70,55 @@ const PatientInfoCard = ({ note }: { note: Note }) => {
   );
 };
 
+const MarkdownRenderer = ({ content, title }: { content: string; title: string }) => {
+  return (
+    <div>
+      <h3 className="text-lg font-semibold text-gray-900 mb-3">{title}</h3>
+      <div className="bg-gray-50 rounded-lg p-4 prose prose-sm max-w-none">
+        <ReactMarkdown 
+          remarkPlugins={[remarkGfm]}
+          components={{
+            h1: ({ children }) => (
+              <h1 className="text-lg font-semibold text-blue-700 mb-2">{children}</h1>
+            ),
+            h2: ({ children }) => (
+              <h2 className="text-base font-semibold text-blue-600 mb-2">{children}</h2>
+            ),
+            h3: ({ children }) => (
+              <h3 className="text-sm font-semibold text-blue-500 mb-1">{children}</h3>
+            ),
+            strong: ({ children }) => (
+              <strong className="font-semibold text-gray-900">{children}</strong>
+            ),
+            em: ({ children }) => (
+              <em className="italic text-gray-700">{children}</em>
+            ),
+            ul: ({ children }) => (
+              <ul className="list-disc list-inside space-y-1 ml-4">{children}</ul>
+            ),
+            ol: ({ children }) => (
+              <ol className="list-decimal list-inside space-y-1 ml-4">{children}</ol>
+            ),
+            li: ({ children }) => (
+              <li className="text-gray-900 leading-relaxed">{children}</li>
+            ),
+            p: ({ children }) => (
+              <p className="text-gray-900 leading-relaxed mb-2">{children}</p>
+            ),
+            blockquote: ({ children }) => (
+              <blockquote className="border-l-4 border-blue-200 pl-4 italic text-gray-700 bg-blue-50 py-2 rounded-r">
+                {children}
+              </blockquote>
+            ),
+          }}
+        >
+          {content}
+        </ReactMarkdown>
+      </div>
+    </div>
+  );
+};
+
 const NoteContentCard = ({ note }: { note: Note }) => {
   const formatDateTime = (dateString: string) => {
     return new Date(dateString).toLocaleString('en-US', {
@@ -103,27 +154,13 @@ const NoteContentCard = ({ note }: { note: Note }) => {
       </div>
 
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">{mainContent.type}</h3>
-          <div className="bg-gray-50 rounded-lg p-4">
-            <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
-              {mainContent.content}
-            </p>
-          </div>
-        </div>
-
-        {note.inputText && note.inputText !== mainContent.content && (
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Input Text</h3>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
-                {note.inputText}
-              </p>
-            </div>
-          </div>
+        {/* Summary */}
+        {note.summary && (
+          <MarkdownRenderer content={note.summary} title="Clinical Summary" />
         )}
 
-        {note.transcription && note.transcription !== mainContent.content && (
+        {/* Transcription */}
+        {note.transcription && (
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Transcription</h3>
             <div className="bg-gray-50 rounded-lg p-4">
@@ -134,6 +171,19 @@ const NoteContentCard = ({ note }: { note: Note }) => {
           </div>
         )}
 
+        {/* Input Text */}
+        {note.inputText && (
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Input Text</h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
+                {note.inputText}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Audio File */}
         {note.audioPath && (
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Audio File</h3>
@@ -145,6 +195,7 @@ const NoteContentCard = ({ note }: { note: Note }) => {
                 <p className="text-gray-900 font-medium">Audio file available</p>
                 <p className="text-sm text-gray-500">Audio recording attached to this note</p>
               </div>
+              <audio src={note.audioPath} controls />
             </div>
           </div>
         )}
@@ -179,12 +230,10 @@ export const NoteDetail = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content - Takes 2/3 of the width on large screens */}
         <div className="lg:col-span-2">
           <NoteContentCard note={note} />
         </div>
         
-        {/* Patient Info Sidebar - Takes 1/3 of the width on large screens */}
         <div className="lg:col-span-1">
           <div className="sticky top-8">
             <PatientInfoCard note={note} />
