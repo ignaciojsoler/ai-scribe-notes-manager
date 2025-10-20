@@ -2,6 +2,12 @@
 
 A full-stack medical note-taking application with AI-powered transcription and summarization.
 
+## Watch the demo video 🎥 
+[![Watch the demo](https://vumbnail.com/1128735883.jpg)](https://vimeo.com/1128735883)
+
+
+
+
 ## 🔧 Prerequisites & Environment Setup
 
 ### 1. Install Prerequisites
@@ -21,13 +27,13 @@ cd lime-ai-challenge
 GOOGLE_API_KEY="your-gemini-api-key"
 ```
 
-**Backend** - Create `backend/.env`:
+**Backend** - Create `backend/.env` if you want to run only the backend:
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/lime?schema=public"
 GOOGLE_API_KEY="your-gemini-api-key"
 ```
 
-**Frontend** - Create `frontend/.env`:
+**Frontend** - Create `frontend/.env` if you want to run only the frontend:
 ```env
 VITE_API_URL="http://localhost:3000/api"
 ```
